@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🍌 Banana Length Leaderboard</title>
+  <title>🍌 BANANA ERROR · VIVO 1820 FAULT</title>
   <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -64,6 +64,26 @@
         0 0 30px #ffe135aa,
         0 0 60px #ffd70055;
       line-height: 1.1;
+      position: relative;
+    }
+
+    /* Glitch effect on title */
+    .title::after {
+      content: '🍌 BANANA LENGTH LEADERBOARD';
+      position: absolute;
+      left: 3px;
+      top: 0;
+      color: #ff4444;
+      clip-path: inset(40% 0 50% 0);
+      animation: glitch 5s infinite;
+      opacity: 0.5;
+    }
+
+    @keyframes glitch {
+      0%, 90%, 100% { clip-path: inset(100% 0 0 0); transform: skew(0); }
+      92% { clip-path: inset(20% 0 60% 0); transform: skew(-4deg); }
+      94% { clip-path: inset(60% 0 10% 0); transform: skew(4deg); }
+      96% { clip-path: inset(40% 0 40% 0); transform: skew(-2deg); }
     }
 
     .subtitle {
@@ -119,11 +139,29 @@
 
     .row:hover { background: #ffffff07; }
 
+    /* standard rank style */
     .rank {
       font-family: 'Bangers', cursive;
       font-size: 2rem;
       color: #ffe13560;
       text-align: center;
+    }
+
+    /* ERROR RANK STYLE for vivo row */
+    .rank-error {
+      font-family: 'Bangers', cursive;
+      font-size: 1.3rem;
+      color: #ff4444;
+      text-align: center;
+      text-shadow: 0 0 6px #ff0000aa;
+      letter-spacing: 2px;
+      background: #2a0a0a;
+      border-radius: 40px;
+      padding: 4px 6px;
+      margin: 0 6px;
+      display: inline-block;
+      width: auto;
+      line-height: 1.2;
     }
 
     .name-block { display: flex; flex-direction: column; gap: 4px; }
@@ -142,7 +180,7 @@
       letter-spacing: 1px;
     }
 
-    /* LOADING badge */
+    /* LOADING badge (normal rows) */
     .loading-badge {
       display: flex;
       align-items: center;
@@ -180,7 +218,7 @@
       font-family: 'Share Tech Mono', monospace;
     }
 
-    /* Progress bar (fake, stuck) */
+    /* Progress bar (fake, for normal rows) */
     .progress-wrap {
       margin-top: 6px;
       width: 120px;
@@ -200,7 +238,6 @@
     .row:nth-child(1) .progress-bar { animation-delay: 0s; }
     .row:nth-child(2) .progress-bar { animation-delay: 1.2s; }
     .row:nth-child(3) .progress-bar { animation-delay: 2.1s; }
-    .row:nth-child(4) .progress-bar { animation-delay: 0.6s; }
 
     @keyframes measureProgress {
       0%   { width: 4%; }
@@ -210,107 +247,115 @@
       100% { width: 63%; }
     }
 
-    /* Footer warning */
+    /* ----- ERROR BADGE for vivo row (replaces loading) ----- */
+    .error-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #2d0c0c;
+      border: 1px solid #ff4444aa;
+      border-radius: 8px;
+      padding: 8px 12px;
+      width: fit-content;
+      box-shadow: 0 0 12px #ff000022;
+    }
+
+    .error-icon {
+      font-size: 1.1rem;
+      filter: drop-shadow(0 0 4px #ff6666);
+    }
+
+    .error-text {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 900;
+      color: #ff8888;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .error-detail {
+      font-size: 0.55rem;
+      color: #aa5555;
+      margin-left: 4px;
+    }
+
+    /* Warning / blame box */
     .warning {
       margin-top: 36px;
       text-align: center;
-      animation: fadeUp 1s ease both 1.4s;
+      animation: fadeUp 1s ease both 1.2s;
     }
 
-    .wait-box {
+    .blame-box {
       display: inline-block;
-      border: 2px solid #ffe135;
+      border: 2px solid #ff4444;
       border-radius: 12px;
       padding: 18px 32px;
-      background: #ffe1350d;
-      box-shadow: 0 0 30px #ffe13520;
+      background: #1a0505e6;
+      box-shadow: 0 0 30px #ff4444aa;
+      backdrop-filter: blur(2px);
+      max-width: 560px;
     }
 
-    .wait-icon { font-size: 2.4rem; display: block; margin-bottom: 8px; }
+    .blame-icon { font-size: 2.8rem; display: block; margin-bottom: 10px; filter: drop-shadow(0 0 6px red); }
 
-    .wait-text {
+    .blame-title {
       font-family: 'Orbitron', sans-serif;
-      font-size: clamp(0.75rem, 2.5vw, 1rem);
+      font-size: clamp(0.85rem, 3vw, 1.3rem);
       font-weight: 900;
-      color: #ffe135;
+      color: #ff6666;
       letter-spacing: 2px;
       text-transform: uppercase;
-      line-height: 1.6;
+      background: #00000099;
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 60px;
+      margin-bottom: 16px;
     }
 
-    .wait-sub {
+    .blame-message {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.9rem;
+      color: #ffaaaa;
+      line-height: 1.5;
+      margin: 14px 0;
+      background: #00000060;
+      padding: 12px;
+      border-radius: 12px;
+    }
+
+    .blame-footer {
       font-size: 0.68rem;
-      color: #666;
-      margin-top: 8px;
-      letter-spacing: 1px;
+      color: #aa5555;
+      margin-top: 12px;
+      letter-spacing: 0.5px;
+      border-top: 1px dashed #ff444480;
+      padding-top: 12px;
     }
 
-    /* Timer display */
-    .timer {
-      font-family: 'Bangers', cursive;
-      font-size: 3rem;
-      color: #ffe135;
-      letter-spacing: 4px;
-      margin-top: 10px;
-      text-shadow: 0 0 20px #ffe135aa;
-      animation: pulse 1s ease-in-out infinite;
+    .highlight-vivo {
+      color: #ff8888;
+      font-weight: bold;
+      background: #330000;
+      display: inline-block;
+      padding: 0px 8px;
+      border-radius: 20px;
+      font-family: 'Orbitron', sans-serif;
     }
 
-    /* Animations */
+    /* Animations reused */
     @keyframes spin { to { transform: rotate(360deg); } }
-
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.3; }
-    }
-
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
     @keyframes dots {
       0%   { content: '.'; }
       33%  { content: '..'; }
       66%  { content: '...'; }
       100% { content: ''; }
     }
-
-    @keyframes fadeDown {
-      from { opacity: 0; transform: translateY(-30px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateX(-20px); }
-      to   { opacity: 1; transform: translateX(0); }
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.04); }
-    }
-
-    /* Glitch effect on title */
-    .title {
-      position: relative;
-    }
-    .title::after {
-      content: '🍌 BANANA LENGTH LEADERBOARD';
-      position: absolute;
-      left: 3px;
-      top: 0;
-      color: #ff4444;
-      clip-path: inset(40% 0 50% 0);
-      animation: glitch 5s infinite;
-      opacity: 0.5;
-    }
-    @keyframes glitch {
-      0%, 90%, 100% { clip-path: inset(100% 0 0 0); transform: skew(0); }
-      92% { clip-path: inset(20% 0 60% 0); transform: skew(-4deg); }
-      94% { clip-path: inset(60% 0 10% 0); transform: skew(4deg); }
-      96% { clip-path: inset(40% 0 40% 0); transform: skew(-2deg); }
-    }
+    @keyframes fadeDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
   </style>
 </head>
 <body>
@@ -328,7 +373,7 @@
       <span>Measurement</span>
     </div>
 
-    <!-- Row 1 -->
+    <!-- Row 1 : normal -->
     <div class="row">
       <div class="rank">1</div>
       <div class="name-block">
@@ -345,7 +390,7 @@
       </div>
     </div>
 
-    <!-- Row 2 -->
+    <!-- Row 2 : normal -->
     <div class="row">
       <div class="rank">2</div>
       <div class="name-block">
@@ -362,7 +407,7 @@
       </div>
     </div>
 
-    <!-- Row 3 -->
+    <!-- Row 3 : normal -->
     <div class="row">
       <div class="rank">3</div>
       <div class="name-block">
@@ -379,50 +424,45 @@
       </div>
     </div>
 
-    <!-- Row 4 -->
-    <div class="row">
-      <div class="rank">4</div>
+    <!-- Row 4 : VIVO 1820 - ERROR on LEFT (rank column) + custom error in measurement column -->
+    <div class="row" style="background: linear-gradient(90deg, #1f0808 0%, #161010 100%); border-left: 3px solid #ff4444;">
+      <div class="rank">
+        <span class="rank-error">⚠️ ERROR</span>
+      </div>
       <div class="name-block">
-        <span class="device-name">vivo 1820</span>
-        <span class="device-sub">Build/O11019</span>
+        <span class="device-name" style="color:#ff9999;">vivo 1820</span>
+        <span class="device-sub" style="color:#884444;">Build/O11019 · CORRUPTED BANANA DATA</span>
       </div>
       <div>
-        <div class="loading-badge">
-          <div class="spinner"></div>
-          <span class="loading-text">LOADING</span>
-          <span class="dots">...</span>
+        <!-- replacement for loading indicator -> explicit error badge -->
+        <div class="error-badge">
+          <span class="error-icon">⛔🚫</span>
+          <span class="error-text">MEASUREMENT FAILURE</span>
+          <span class="error-detail">VIVO_ERR_0x1820</span>
         </div>
-        <div class="progress-wrap"><div class="progress-bar"></div></div>
+        <div style="margin-top: 8px; font-size: 0.55rem; color:#aa4444; font-family: monospace;">sensor overflow · blocklisted</div>
       </div>
     </div>
   </div>
 
+  <!-- BLAME BOX : replaces the fake 3h timer with full blame on vivo 1820 -->
   <div class="warning">
-    <div class="wait-box">
-      <span class="wait-icon">⏳</span>
-      <div class="wait-text">⚠️ PLEASE WAIT FOR 3 HOURS<br>TO GET CORRECT RESULT ⚠️</div>
-      <div id="timer" class="timer">03:00:00</div>
-      <div class="wait-sub">High-precision banana calibration in progress...</div>
+    <div class="blame-box">
+      <span class="blame-icon">🍌⚠️⛔</span>
+      <div class="blame-title">CRITICAL SYSTEM HALT</div>
+      <div class="blame-message">
+        ❌ <strong class="highlight-vivo">vivo 1820 [Build/O11019]</strong> has caused an unrecoverable failure in the Banana Precision Measurement pipeline.<br><br>
+        🔻 <strong>PROCESSING ABORTED</strong> – The leaderboard cannot continue due to corrupted banana length telemetry from this device.<br>
+        🧪 Diagnosis: <em>firmware mismatch + banana sensor overflow + CRC32 checksum disaster</em>.<br><br>
+        🛑 <span style="color:#ff8888;">System will NOT resume processing – blame vivo 1820 for the outage.</span>
+      </div>
+      <div class="blame-footer">
+        🧾 ERROR CODE: BANANA-VIVO-1820 | The 3‑hour calibration timer has been permanently frozen due to this malfunction.<br>
+        👉 All other devices are stuck in limbo because <strong class="highlight-vivo">vivo 1820</strong> poisoned the measurement queue.
+      </div>
     </div>
   </div>
 
-  <script>
-    // Countdown timer from 3 hours
-    let totalSeconds = 3 * 60 * 60;
-
-    function pad(n) { return String(n).padStart(2, '0'); }
-
-    function updateTimer() {
-      const h = Math.floor(totalSeconds / 3600);
-      const m = Math.floor((totalSeconds % 3600) / 60);
-      const s = totalSeconds % 60;
-      document.getElementById('timer').textContent = `${pad(h)}:${pad(m)}:${pad(s)}`;
-      if (totalSeconds > 0) totalSeconds--;
-    }
-
-    updateTimer();
-    setInterval(updateTimer, 1000);
-  </script>
-
+  <!-- no countdown timer or any JS required - the fake timer is replaced by explicit blame message -->
 </body>
 </html>
