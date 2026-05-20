@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🍌 Banana Length Leaderboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0a0a0a;
+      min-height: 100vh;
+      font-family: 'Share Tech Mono', monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 16px 60px;
+      overflow-x: hidden;
+    }
+
+    /* Scanline overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.18) 2px,
+        rgba(0,0,0,0.18) 4px
+      );
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 44px;
+      animation: fadeDown 0.8s ease both;
+    }
+
+    .banana-icon {
+      font-size: 72px;
+      display: block;
+      animation: swing 2.4s ease-in-out infinite;
+      filter: drop-shadow(0 0 18px #ffe135cc);
+      margin-bottom: 8px;
+    }
+
+    @keyframes swing {
+      0%, 100% { transform: rotate(-10deg); }
+      50% { transform: rotate(10deg); }
+    }
+
+    .title {
+      font-family: 'Bangers', cursive;
+      font-size: clamp(2.2rem, 7vw, 4.5rem);
+      letter-spacing: 4px;
+      color: #ffe135;
+      text-shadow:
+        3px 3px 0 #b8860b,
+        0 0 30px #ffe135aa,
+        0 0 60px #ffd70055;
+      line-height: 1.1;
+    }
+
+    .subtitle {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 6px;
+      color: #666;
+      margin-top: 10px;
+      text-transform: uppercase;
+    }
+
+    /* Board container */
+    .board {
+      width: 100%;
+      max-width: 720px;
+      background: linear-gradient(135deg, #111 0%, #1a1a1a 100%);
+      border: 2px solid #ffe13540;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 0 60px #ffe13515, 0 20px 60px #00000080;
+      animation: fadeUp 0.9s ease both 0.3s;
+    }
+
+    .board-header {
+      display: grid;
+      grid-template-columns: 60px 1fr 180px;
+      align-items: center;
+      padding: 14px 28px;
+      background: #ffe135;
+      color: #111;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 60px 1fr 180px;
+      align-items: center;
+      padding: 22px 28px;
+      border-bottom: 1px solid #1f1f1f;
+      transition: background 0.3s;
+      animation: slideIn 0.6s ease both;
+    }
+
+    .row:last-child { border-bottom: none; }
+    .row:nth-child(1) { animation-delay: 0.5s; }
+    .row:nth-child(2) { animation-delay: 0.65s; }
+    .row:nth-child(3) { animation-delay: 0.8s; }
+    .row:nth-child(4) { animation-delay: 0.95s; }
+
+    .row:hover { background: #ffffff07; }
+
+    .rank {
+      font-family: 'Bangers', cursive;
+      font-size: 2rem;
+      color: #ffe13560;
+      text-align: center;
+    }
+
+    .name-block { display: flex; flex-direction: column; gap: 4px; }
+
+    .device-name {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #f0f0f0;
+      letter-spacing: 1px;
+    }
+
+    .device-sub {
+      font-size: 0.65rem;
+      color: #555;
+      letter-spacing: 1px;
+    }
+
+    /* LOADING badge */
+    .loading-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #0d0d0d;
+      border: 1px solid #ffe13530;
+      border-radius: 8px;
+      padding: 10px 14px;
+      width: fit-content;
+    }
+
+    .spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid #ffe13540;
+      border-top-color: #ffe135;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      flex-shrink: 0;
+    }
+
+    .loading-text {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.62rem;
+      font-weight: 700;
+      color: #ffe135;
+      letter-spacing: 3px;
+      animation: blink 1.4s ease-in-out infinite;
+    }
+
+    .dots {
+      color: #ffe135;
+      font-size: 0.62rem;
+      animation: dots 1.5s steps(3, end) infinite;
+      font-family: 'Share Tech Mono', monospace;
+    }
+
+    /* Progress bar (fake, stuck) */
+    .progress-wrap {
+      margin-top: 6px;
+      width: 120px;
+      height: 3px;
+      background: #1e1e1e;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #ffe135, #ffb700);
+      border-radius: 99px;
+      animation: measureProgress 8s ease-in-out infinite alternate;
+    }
+
+    .row:nth-child(1) .progress-bar { animation-delay: 0s; }
+    .row:nth-child(2) .progress-bar { animation-delay: 1.2s; }
+    .row:nth-child(3) .progress-bar { animation-delay: 2.1s; }
+    .row:nth-child(4) .progress-bar { animation-delay: 0.6s; }
+
+    @keyframes measureProgress {
+      0%   { width: 4%; }
+      30%  { width: 22%; }
+      55%  { width: 38%; }
+      80%  { width: 51%; }
+      100% { width: 63%; }
+    }
+
+    /* Footer warning */
+    .warning {
+      margin-top: 36px;
+      text-align: center;
+      animation: fadeUp 1s ease both 1.4s;
+    }
+
+    .wait-box {
+      display: inline-block;
+      border: 2px solid #ffe135;
+      border-radius: 12px;
+      padding: 18px 32px;
+      background: #ffe1350d;
+      box-shadow: 0 0 30px #ffe13520;
+    }
+
+    .wait-icon { font-size: 2.4rem; display: block; margin-bottom: 8px; }
+
+    .wait-text {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(0.75rem, 2.5vw, 1rem);
+      font-weight: 900;
+      color: #ffe135;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      line-height: 1.6;
+    }
+
+    .wait-sub {
+      font-size: 0.68rem;
+      color: #666;
+      margin-top: 8px;
+      letter-spacing: 1px;
+    }
+
+    /* Timer display */
+    .timer {
+      font-family: 'Bangers', cursive;
+      font-size: 3rem;
+      color: #ffe135;
+      letter-spacing: 4px;
+      margin-top: 10px;
+      text-shadow: 0 0 20px #ffe135aa;
+      animation: pulse 1s ease-in-out infinite;
+    }
+
+    /* Animations */
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    @keyframes dots {
+      0%   { content: '.'; }
+      33%  { content: '..'; }
+      66%  { content: '...'; }
+      100% { content: ''; }
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+    }
+
+    /* Glitch effect on title */
+    .title {
+      position: relative;
+    }
+    .title::after {
+      content: '🍌 BANANA LENGTH LEADERBOARD';
+      position: absolute;
+      left: 3px;
+      top: 0;
+      color: #ff4444;
+      clip-path: inset(40% 0 50% 0);
+      animation: glitch 5s infinite;
+      opacity: 0.5;
+    }
+    @keyframes glitch {
+      0%, 90%, 100% { clip-path: inset(100% 0 0 0); transform: skew(0); }
+      92% { clip-path: inset(20% 0 60% 0); transform: skew(-4deg); }
+      94% { clip-path: inset(60% 0 10% 0); transform: skew(4deg); }
+      96% { clip-path: inset(40% 0 40% 0); transform: skew(-2deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <span class="banana-icon">🍌</span>
+    <div class="title">🍌 BANANA LENGTH LEADERBOARD</div>
+    <div class="subtitle">Advanced Precision Measurement System v2.4.1</div>
+  </div>
+
+  <div class="board">
+    <div class="board-header">
+      <span>#</span>
+      <span>Device</span>
+      <span>Measurement</span>
+    </div>
+
+    <!-- Row 1 -->
+    <div class="row">
+      <div class="rank">1</div>
+      <div class="name-block">
+        <span class="device-name">SM-A042F</span>
+        <span class="device-sub">Samsung Galaxy A04e</span>
+      </div>
+      <div>
+        <div class="loading-badge">
+          <div class="spinner"></div>
+          <span class="loading-text">LOADING</span>
+          <span class="dots">...</span>
+        </div>
+        <div class="progress-wrap"><div class="progress-bar"></div></div>
+      </div>
+    </div>
+
+    <!-- Row 2 -->
+    <div class="row">
+      <div class="rank">2</div>
+      <div class="name-block">
+        <span class="device-name">Redmi 13C 5G</span>
+        <span class="device-sub">Xiaomi Redmi Series</span>
+      </div>
+      <div>
+        <div class="loading-badge">
+          <div class="spinner"></div>
+          <span class="loading-text">LOADING</span>
+          <span class="dots">...</span>
+        </div>
+        <div class="progress-wrap"><div class="progress-bar"></div></div>
+      </div>
+    </div>
+
+    <!-- Row 3 -->
+    <div class="row">
+      <div class="rank">3</div>
+      <div class="name-block">
+        <span class="device-name">OnePlus 13R 5G</span>
+        <span class="device-sub">OnePlus R Series</span>
+      </div>
+      <div>
+        <div class="loading-badge">
+          <div class="spinner"></div>
+          <span class="loading-text">LOADING</span>
+          <span class="dots">...</span>
+        </div>
+        <div class="progress-wrap"><div class="progress-bar"></div></div>
+      </div>
+    </div>
+
+    <!-- Row 4 -->
+    <div class="row">
+      <div class="rank">4</div>
+      <div class="name-block">
+        <span class="device-name">vivo 1820</span>
+        <span class="device-sub">Build/O11019</span>
+      </div>
+      <div>
+        <div class="loading-badge">
+          <div class="spinner"></div>
+          <span class="loading-text">LOADING</span>
+          <span class="dots">...</span>
+        </div>
+        <div class="progress-wrap"><div class="progress-bar"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="warning">
+    <div class="wait-box">
+      <span class="wait-icon">⏳</span>
+      <div class="wait-text">⚠️ PLEASE WAIT FOR 3 HOURS<br>TO GET CORRECT RESULT ⚠️</div>
+      <div id="timer" class="timer">03:00:00</div>
+      <div class="wait-sub">High-precision banana calibration in progress...</div>
+    </div>
+  </div>
+
+  <script>
+    // Countdown timer from 3 hours
+    let totalSeconds = 3 * 60 * 60;
+
+    function pad(n) { return String(n).padStart(2, '0'); }
+
+    function updateTimer() {
+      const h = Math.floor(totalSeconds / 3600);
+      const m = Math.floor((totalSeconds % 3600) / 60);
+      const s = totalSeconds % 60;
+      document.getElementById('timer').textContent = `${pad(h)}:${pad(m)}:${pad(s)}`;
+      if (totalSeconds > 0) totalSeconds--;
+    }
+
+    updateTimer();
+    setInterval(updateTimer, 1000);
+  </script>
+
+</body>
+</html>
